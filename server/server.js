@@ -98,6 +98,7 @@ const resolvers = {
                 age,
                 isMarried
             }
+            console.log("From server:",newUser)
             users.push(newUser);
         }
     },
