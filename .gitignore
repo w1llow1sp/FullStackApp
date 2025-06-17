@@ -1,0 +1,15 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Сборка
+dist/
+build/
+
+# Локальные файлы IDE
+.vscode/
+.idea/
+
+# Локальная конфигурация
+.env
