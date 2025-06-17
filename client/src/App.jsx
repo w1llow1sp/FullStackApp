@@ -24,11 +24,13 @@ query GetUserByID($id: ID!) {
 }
 `
 
-
 const CREATE_USER = gql`
   mutation CreateUser($name: String!, $age: Int!, $isMarried: Boolean!) {
     createUser(name: $name, age: $age, isMarried: $isMarried) {
+      id
       name
+      age
+      isMarried
     }
   }
 `;
@@ -39,7 +41,8 @@ function App() {
     const {
         data: getUsersData,
         error: getUsersError,
-        loading: getUsersLoading
+        loading: getUsersLoading,
+        refetch: refetchUsers
     } = useQuery(GET_USERS)
     const {
         data: getUserByIdData,
@@ -49,20 +52,29 @@ function App() {
         variables: {id: '2'}
     })
 
-    const [createUser] = useMutation(CREATE_USER)
+    const [createUser] = useMutation(CREATE_USER, {
+        refetchQueries: [
+            { query: GET_USERS }, // Обновляем список пользователей после мутации
+        ],
+    })
 
     if (getUsersLoading) return <p>...Data loading</p>
-    if (getUsersError) return <p>Error: {error.message}</p>
+    if (getUsersError) return <p>Error: {getUsersError.message}</p>
 
     const handleCreateUser = async () => {
-        console.log('createUser :', newUser)
-        await createUser({
-            variables: {
-                name: newUser.name,
-                age: Number(newUser.age),
-                isMarried: false,
-            },
-        });
+        try {
+            await createUser({
+                variables: {
+                    name: newUser.name,
+                    age: Number(newUser.age),
+                    isMarried: false,
+                },
+            });
+            // Очищаем форму после успешного создания
+            setNewUser({});
+        } catch (error) {
+            console.error('Error creating user:', error);
+        }
     }
 
     return (
@@ -70,6 +82,7 @@ function App() {
             <div>
                 <input
                     placeholder="Имя"
+                    value={newUser.name || ''}
                     onChange={(e) =>
                         setNewUser((prev) => ({ ...prev, name: e.target.value }))
                     }
@@ -77,6 +90,7 @@ function App() {
                 <input
                     placeholder="Возраст"
                     type="number"
+                    value={newUser.age || ''}
                     onChange={(e) =>
                         setNewUser((prev) => ({ ...prev, age: e.target.value }))
                     }
