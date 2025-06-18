@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@apollo/client": "^3.13.8",
-    "@reduxjs/toolkit": "^2.8.2"
-  },
-  "devDependencies": {
-    "daisyui": "^5.0.43"
-  }
-}
