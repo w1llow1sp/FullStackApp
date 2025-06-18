@@ -1,0 +1,42 @@
+{
+    "name": "FullstackApp",
+    "version": "1.0.0",
+    "description": "Полнофункциональное приложение для управления пользователями с использованием GraphQL, Apollo Server, React и Redux Toolkit.",
+    "main": "index.js",
+    "engines": {
+      "node": "20.17.0"
+    },
+    "scripts": {
+      "install:all": "npm install --prefix server && npm install --prefix client",
+      "build:backend": "npm run build --prefix server",
+      "build:frontend": "npm run build --prefix client",
+      "build": "npm run install:all && npm run build:backend && npm run build:frontend",
+      "start:backend": "npm run start --prefix server",
+      "start": "npm run start:backend",
+      "dev:backend": "npm run dev --prefix server",
+      "dev:frontend": "npm run dev --prefix client",
+      "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+      "test:backend": "npm test --prefix server",
+      "test:frontend": "npm test --prefix client",
+      "test": "npm run test:backend && npm run test:frontend"
+    },
+    "keywords": [
+      "nodejs",
+      "graphql",
+      "typescript",
+      "react",
+      "apollo-client",
+      "apollo-server",
+      "jest-test",
+      "tailwind",
+      "redux-toolkit"
+    ],
+    "author": {
+      "name": "w1llow1sp",
+      "url": "https://github.com/w1llow1sp"
+    },
+    "license": "ISC",
+    "devDependencies": {
+      "concurrently": "^8.2.0"
+    }
+  }
