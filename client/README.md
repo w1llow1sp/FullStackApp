@@ -1,54 +1,109 @@
-# React + TypeScript + Vite
+# Apollo GraphQL Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Клиентская часть приложения для управления пользователями с использованием React, TypeScript, Redux Toolkit Query и GraphQL.
 
-Currently, two official plugins are available:
+## Функциональность
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Основные возможности
+- **Просмотр пользователей**: Отображение списка всех пользователей в виде карточек
+- **Создание пользователей**: Модальная форма для добавления новых пользователей
+- **Редактирование пользователей**: Модальная форма для изменения данных пользователей
+- **Удаление пользователей**: Удаление пользователей с подтверждением
+- **Выбор пользователя**: Выделение пользователя для просмотра детальной информации
 
-## Expanding the ESLint configuration
+### Фильтрация и поиск
+- **Поиск по имени**: Поиск с debounce (300ms задержка)
+- **Фильтр по возрасту**: 
+  - Молодые (18-30 лет)
+  - Взрослые (31-50 лет)
+  - Старшие (50+ лет)
+- **Фильтр по семейному положению**: В браке / Не в браке
+- **Раскрывающиеся фильтры**: Возможность скрыть/показать дополнительные фильтры
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Статистика
+- Общее количество пользователей
+- Количество отфильтрованных пользователей
+- Средний возраст пользователей
+- Количество пользователей в браке
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### UX/UI особенности
+- **Уведомления**: Автоматические уведомления об успешных операциях и ошибках
+- **Подтверждения**: Диалоги подтверждения для критических операций
+- **Загрузки**: Индикаторы загрузки для всех асинхронных операций
+- **Адаптивный дизайн**: Поддержка мобильных устройств
+- **Анимации**: Плавные переходы и hover-эффекты
+
+## Технологии
+
+- **React 18** - Основной фреймворк
+- **TypeScript** - Типизация
+- **Redux Toolkit Query** - Управление состоянием и API
+- **GraphQL** - API запросы
+- **Tailwind CSS** - Стилизация
+- **Vite** - Сборка и разработка
+
+## Архитектура
+
+Проект построен по принципу Feature-Sliced Design (FSD):
+
+```
+src/
+├── app/           # Конфигурация приложения
+├── entities/      # Бизнес-сущности
+│   └── user/      # Сущность пользователя
+├── features/      # Функциональные возможности
+│   ├── createUser/    # Создание пользователя
+│   ├── editUser/      # Редактирование пользователя
+│   └── filterUsers/   # Фильтрация пользователей
+├── pages/         # Страницы приложения
+├── shared/        # Общие компоненты и утилиты
+│   ├── ui/        # UI компоненты
+│   └── lib/       # Утилиты
+└── widgets/       # Составные компоненты
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Установка и запуск
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+# Установка зависимостей
+npm install
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+# Запуск в режиме разработки
+npm run dev
+
+# Сборка для продакшена
+npm run build
+
+# Предварительный просмотр сборки
+npm run preview
 ```
+
+## API Endpoints
+
+Приложение использует GraphQL API для следующих операций:
+
+- `getUsers` - Получение списка пользователей
+- `createUser` - Создание нового пользователя
+- `editUserById` - Редактирование пользователя
+- `deleteUserById` - Удаление пользователя
+
+## Компоненты
+
+### Основные компоненты
+- `UserCard` - Карточка пользователя с кнопками действий
+- `FilterUsers` - Компонент фильтрации и поиска
+- `EditUserModal` - Модальное окно редактирования
+- `ConfirmDialog` - Диалог подтверждения
+- `Notification` - Компонент уведомлений
+- `UsersStats` - Статистика пользователей
+
+### Утилиты
+- `filterUsers` - Функция фильтрации пользователей по различным критериям
+
+## Состояние приложения
+
+Управление состоянием осуществляется через Redux Toolkit Query с автоматическим кешированием и инвалидацией данных при изменениях.
+
+## Стилизация
+
+Используется Tailwind CSS с кастомными компонентами для создания современного и отзывчивого интерфейса.

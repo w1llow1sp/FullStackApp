@@ -194,3 +194,26 @@ input FilterUsersInput {
 ## 📝 Лицензия
 
 MIT 
+
+## 🚀 Деплой на Render
+
+### Backend (Apollo GraphQL Server)
+- Web Service
+- Root: `/server`
+- Build Command: `npm install && npm run build`
+- Start Command: `npm start`
+- Env: (ничего не нужно, Render сам задаёт PORT)
+
+### Frontend (React/Vite)
+- Static Site
+- Root: `/client`
+- Build Command: `npm install && npm run build`
+- Publish Directory: `dist`
+- Env: `VITE_API_URL=https://your-backend.onrender.com/graphql`
+
+### Порядок действий
+1. Деплой backend (Web Service, root: `/server`).
+2. После деплоя Render покажет публичный URL сервера.
+3. В `/client/.env` пропиши этот URL как `VITE_API_URL`.
+4. Деплой frontend (Static Site, root: `/client`).
+5. Готово! 

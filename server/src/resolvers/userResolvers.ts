@@ -2,9 +2,26 @@ import {User, CreateUserInput, UpdateUserInput, FilterUsersInput} from '../types
 
 // In-memory database
 export const users: User[] = [
-    {id: "1", name: "John Doe", age: 30, isMarried: true},
-    {id: "2", name: "Jane Smith", age: 25, isMarried: false},
-    {id: "3", name: "Alice Johnson", age: 28, isMarried: false},
+    {id: "1", name: "Александр Петров", age: 32, isMarried: true},
+    {id: "2", name: "Елена Смирнова", age: 28, isMarried: false},
+    {id: "3", name: "Дмитрий Иванов", age: 35, isMarried: true},
+    {id: "4", name: "Мария Козлова", age: 24, isMarried: false},
+    {id: "5", name: "Сергей Волков", age: 29, isMarried: true},
+    {id: "6", name: "Анна Морозова", age: 31, isMarried: false},
+    {id: "7", name: "Андрей Соколов", age: 27, isMarried: true},
+    {id: "8", name: "Ольга Лебедева", age: 33, isMarried: true},
+    {id: "9", name: "Михаил Новиков", age: 26, isMarried: false},
+    {id: "10", name: "Татьяна Егорова", age: 30, isMarried: true},
+    {id: "11", name: "Владимир Козлов", age: 38, isMarried: true},
+    {id: "12", name: "Наталья Степанова", age: 25, isMarried: false},
+    {id: "13", name: "Игорь Николаев", age: 34, isMarried: false},
+    {id: "14", name: "Юлия Орлова", age: 29, isMarried: true},
+    {id: "15", name: "Павел Андреев", age: 31, isMarried: true},
+    {id: "16", name: "Екатерина Макарова", age: 27, isMarried: false},
+    {id: "17", name: "Алексей Зайцев", age: 36, isMarried: true},
+    {id: "18", name: "Ирина Соловьева", age: 28, isMarried: false},
+    {id: "19", name: "Роман Виноградов", age: 33, isMarried: true},
+    {id: "20", name: "Светлана Романова", age: 26, isMarried: false},
 ];
 
 export const userResolvers = {

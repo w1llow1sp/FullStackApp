@@ -1,6 +1,7 @@
 // src/app/store.ts
 import { configureStore } from '@reduxjs/toolkit';
-import { userApi } from '../entities/user/api/userApi';
+import {userApi} from "../entities/user";
+
 
 export const store = configureStore({
     reducer: {
