@@ -4,11 +4,11 @@ import {User} from "../types/user";
 beforeEach(() => {
     users.length = 0;
     users.push(
-        {id: "1", name: "John Doe", age: 30, isMarried: true},
-        {id: "2", name: "Jane Smith", age: 25, isMarried: false},
-        {id: "3", name: "Alice Johnson", age: 28, isMarried: false},
-        {id: "4", name: "Bob Wilson", age: 35, isMarried: true},
-        {id: "5", name: "Carol Brown", age: 22, isMarried: false}
+        {id: "1", name: "Александр Петров", age: 32, isMarried: true},
+        {id: "2", name: "Елена Смирнова", age: 28, isMarried: false},
+        {id: "3", name: "Дмитрий Иванов", age: 35, isMarried: true},
+        {id: "4", name: "Мария Козлова", age: 24, isMarried: false},
+        {id: "5", name: "Сергей Волков", age: 29, isMarried: true}
     );
 });
 
@@ -18,14 +18,14 @@ describe('User Resolvers', () => {
             it('Должен вернуть всех пользователей', () => {
                 const result = userResolvers.Query.getUsers();
                 expect(result).toHaveLength(5);
-                expect(result[0].name).toBe('John Doe');
+                expect(result[0].name).toBe('Александр Петров');
             });
         });
 
         describe('getUserById', () => {
             it('Должен вернуть пользователя по id', () => {
                 const result = userResolvers.Query.getUserById({}, {id: '1'});
-                expect(result).toEqual({id: "1", name: "John Doe", age: 30, isMarried: true});
+                expect(result).toEqual({id: "1", name: "Александр Петров", age: 32, isMarried: true});
             });
 
             it('Должен вернуть undefined для несуществующего id', () => {
@@ -36,15 +36,15 @@ describe('User Resolvers', () => {
 
         describe('searchUsers', () => {
             it('Должен вернуть пользователей, соответствующих поисковому запросу (без учета регистра)', () => {
-                const result = userResolvers.Query.searchUsers({}, {searchTerm: 'doe'});
+                const result = userResolvers.Query.searchUsers({}, {searchTerm: 'петров'});
                 expect(result).toHaveLength(1);
-                expect(result[0].name).toBe('John Doe');
+                expect(result[0].name).toBe('Александр Петров');
             });
 
             it('Должен вернуть пользователей с частичным совпадением имени', () => {
-                const result = userResolvers.Query.searchUsers({}, {searchTerm: 'doe'});
+                const result = userResolvers.Query.searchUsers({}, {searchTerm: 'александр'});
                 expect(result).toHaveLength(1);
-                expect(result[0].name).toBe('John Doe');
+                expect(result[0].name).toBe('Александр Петров');
             });
 
             it('Должен вернуть всех пользователей, если поисковый запрос пуст', () => {
@@ -58,18 +58,20 @@ describe('User Resolvers', () => {
             });
 
             it('Должен вернуть несколько пользователей, если поисковый запрос соответствует нескольким именам', () => {
-                const result = userResolvers.Query.searchUsers({}, {searchTerm: 'b'});
-                expect(result).toHaveLength(2);
-                expect(result.some(user => user.name === 'Bob Wilson')).toBe(true);
-                expect(result.some(user => user.name === 'Carol Brown')).toBe(true);
+                const result = userResolvers.Query.searchUsers({}, {searchTerm: 'а'});
+                expect(result).toHaveLength(4);
+                expect(result.some(user => user.name === 'Александр Петров')).toBe(true);
+                expect(result.some(user => user.name === 'Елена Смирнова')).toBe(true);
+                expect(result.some(user => user.name === 'Дмитрий Иванов')).toBe(true);
+                expect(result.some(user => user.name === 'Мария Козлова')).toBe(true);
             });
         });
 
         describe('filterUsers', () => {
             it('Должен отфильтровать пользователей по поисковому запросу', () => {
-                const result = userResolvers.Query.filterUsers({}, {input: {nameSearch: 'doe'}});
+                const result = userResolvers.Query.filterUsers({}, {input: {nameSearch: 'петров'}});
                 expect(result).toHaveLength(1);
-                expect(result[0].name).toBe('John Doe');
+                expect(result[0].name).toBe('Александр Петров');
             });
 
             it('Должен отфильтровать пользователей по диапазону возраста', () => {
@@ -80,33 +82,33 @@ describe('User Resolvers', () => {
 
             it('Должен отфильтровать пользователей по диапазону возраста', () => {
                 const result = userResolvers.Query.filterUsers({}, {input: {ageTo: 25}});
-                expect(result).toHaveLength(2);
+                expect(result).toHaveLength(1);
                 expect(result.every(user => user.age <= 25)).toBe(true);
             });
 
             it('Должен отфильтровать пользователей по диапазону возраста', () => {
                 const result = userResolvers.Query.filterUsers({}, {input: {ageFrom: 25, ageTo: 30}});
-                expect(result).toHaveLength(3);
+                expect(result).toHaveLength(2);
                 expect(result.every(user => user.age >= 25 && user.age <= 30)).toBe(true);
             });
 
             it('Должен отфильтровать пользователей по семейному положению', () => {
                 const result = userResolvers.Query.filterUsers({}, {input: {isMarried: true}});
-                expect(result).toHaveLength(2);
+                expect(result).toHaveLength(3);
                 expect(result.every(user => user.isMarried)).toBe(true);
             });
 
             it('Должен отфильтровать пользователей по семейному положению', () => {
                 const result = userResolvers.Query.filterUsers({}, {input: {isMarried: false}});
-                expect(result).toHaveLength(3);
+                expect(result).toHaveLength(2);
                 expect(result.every(user => !user.isMarried)).toBe(true);
             });
 
             it('Должен отфильтровать пользователей по нескольким фильтрам', () => {
-                const result = userResolvers.Query.filterUsers({}, {input: {nameSearch: 'b', ageFrom: 30, isMarried: true}});
+                const result = userResolvers.Query.filterUsers({}, {input: {nameSearch: 'александр', ageFrom: 30, isMarried: true}});
                 expect(result).toHaveLength(1);
-                expect(result[0].name).toBe('Bob Wilson');
-                expect(result[0].age).toBe(35);
+                expect(result[0].name).toBe('Александр Петров');
+                expect(result[0].age).toBe(32);
                 expect(result[0].isMarried).toBe(true);
             });
 
@@ -121,14 +123,14 @@ describe('User Resolvers', () => {
         describe('createUser', () => {
             it('Должен создать нового пользователя', () => {
                 const newUser = userResolvers.Mutation.createUser({}, {
-                    name: 'Test User',
+                    name: 'Тестовый Пользователь',
                     age: 40,
                     isMarried: false
                 });
 
                 expect(newUser).toEqual({
                     id: '6',
-                    name: 'Test User',
+                    name: 'Тестовый Пользователь',
                     age: 40,
                     isMarried: false
                 });
@@ -144,7 +146,7 @@ describe('User Resolvers', () => {
                 const initialUsers = userResolvers.Query.getUsers();
                 expect(initialUsers).toHaveLength(5);
                 expect(initialUsers.find(user => user.id === '1')).toEqual(
-                    expect.objectContaining({id: "1", name: "John Doe"})
+                    expect.objectContaining({id: "1", name: "Александр Петров"})
                 );
 
                 // Удаляем пользователя
@@ -159,16 +161,16 @@ describe('User Resolvers', () => {
 
                 // Проверяем, что остальные пользователи остались
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "2", name: "Jane Smith"})
+                    expect.objectContaining({id: "2", name: "Елена Смирнова"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "3", name: "Alice Johnson"})
+                    expect.objectContaining({id: "3", name: "Дмитрий Иванов"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "4", name: "Bob Wilson"})
+                    expect.objectContaining({id: "4", name: "Мария Козлова"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "5", name: "Carol Brown"})
+                    expect.objectContaining({id: "5", name: "Сергей Волков"})
                 );
             });
 
@@ -186,19 +188,19 @@ describe('User Resolvers', () => {
 
                 // Проверяем, что все пользователи остались на месте
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "1", name: "John Doe"})
+                    expect.objectContaining({id: "1", name: "Александр Петров"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "2", name: "Jane Smith"})
+                    expect.objectContaining({id: "2", name: "Елена Смирнова"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "3", name: "Alice Johnson"})
+                    expect.objectContaining({id: "3", name: "Дмитрий Иванов"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "4", name: "Bob Wilson"})
+                    expect.objectContaining({id: "4", name: "Мария Козлова"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "5", name: "Carol Brown"})
+                    expect.objectContaining({id: "5", name: "Сергей Волков"})
                 );
             });
 
@@ -214,16 +216,16 @@ describe('User Resolvers', () => {
 
                 // Проверяем, что остальные пользователи остались
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "1", name: "John Doe"})
+                    expect.objectContaining({id: "1", name: "Александр Петров"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "2", name: "Jane Smith"})
+                    expect.objectContaining({id: "2", name: "Елена Смирнова"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "3", name: "Alice Johnson"})
+                    expect.objectContaining({id: "3", name: "Дмитрий Иванов"})
                 );
                 expect(result).toContainEqual(
-                    expect.objectContaining({id: "4", name: "Bob Wilson"})
+                    expect.objectContaining({id: "4", name: "Мария Козлова"})
                 );
             });
         });
@@ -239,7 +241,7 @@ describe('User Resolvers', () => {
                     expect.objectContaining({
                         id:"2",
                         name: "Sunny Doewn",
-                        age:25,
+                        age:28,
                         isMarried: false
                     })
                 )
@@ -256,7 +258,7 @@ describe('User Resolvers', () => {
                 expect(result).toContainEqual(
                     expect.objectContaining({
                         id:"2",
-                        name: "Jane Smith",
+                        name: "Елена Смирнова",
                         age:35,
                         isMarried: false
                     })
@@ -274,8 +276,8 @@ describe('User Resolvers', () => {
                 expect(result).toContainEqual(
                     expect.objectContaining({
                         id:"2",
-                        name: "Jane Smith",
-                        age:25,
+                        name: "Елена Смирнова",
+                        age:28,
                         isMarried: true
                     })
                 )
@@ -296,19 +298,19 @@ describe('User Resolvers', () => {
                 // Проверяем, что массив users не изменился
                 expect(users).toHaveLength(5);
                 expect(users).toContainEqual(
-                    expect.objectContaining({ id: '1', name: 'John Doe' })
+                    expect.objectContaining({ id: '1', name: 'Александр Петров' })
                 );
                 expect(users).toContainEqual(
-                    expect.objectContaining({ id: '2', name: 'Jane Smith' })
+                    expect.objectContaining({ id: '2', name: 'Елена Смирнова' })
                 );
                 expect(users).toContainEqual(
-                    expect.objectContaining({ id: '3', name: 'Alice Johnson' })
+                    expect.objectContaining({ id: '3', name: 'Дмитрий Иванов' })
                 );
                 expect(users).toContainEqual(
-                    expect.objectContaining({ id: '4', name: 'Bob Wilson' })
+                    expect.objectContaining({ id: '4', name: 'Мария Козлова' })
                 );
                 expect(users).toContainEqual(
-                    expect.objectContaining({ id: '5', name: 'Carol Brown' })
+                    expect.objectContaining({ id: '5', name: 'Сергей Волков' })
                 );
 
             })
