@@ -17,3 +17,10 @@ export interface UpdateUserInput {
   newAge?: number;  // Опционально, так как возраст может не меняться
   isMarriedStatusChanged?: boolean; // Опционально, новое значение для isMarried
 }
+
+export interface FilterUsersInput {
+  nameSearch?: string;
+  ageFrom?: number;
+  ageTo?: number;
+  isMarried?: boolean;
+}

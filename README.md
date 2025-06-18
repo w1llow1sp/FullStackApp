@@ -1,5 +1,11 @@
 # Apollo GraphQL Users Management
 
+[![Coverage Status](https://img.shields.io/badge/coverage-100%25-brightgreen)](./server/coverage/lcov-report/index.html)
+![Node.js](https://img.shields.io/badge/node-%3E=18.0.0-green)
+![TypeScript](https://img.shields.io/badge/TypeScript-4.x-blue)
+![Jest](https://img.shields.io/badge/tested_with-jest-99424f.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
 Полнофункциональное приложение для управления пользователями с использованием GraphQL, Apollo Server, React и Redux Toolkit.
 
 ## 🚀 Технологии
@@ -96,7 +102,11 @@ npm run format
 ### Backend (GraphQL API)
 - ✅ **Query**: получение списка пользователей
 - ✅ **Query**: получение пользователя по ID
+- ✅ **Query**: поиск пользователей по имени (нестрогое совпадение)
+- ✅ **Query**: фильтрация пользователей (по имени, возрасту, семейному положению)
 - ✅ **Mutation**: создание нового пользователя
+- ✅ **Mutation**: удаление пользователя
+- ✅ **Mutation**: редактирование пользователя
 - ✅ **TypeScript**: полная типизация
 - ✅ **Тесты**: покрытие кода 100%
 
@@ -104,6 +114,10 @@ npm run format
 - ✅ **Список пользователей**: отображение всех пользователей
 - ✅ **Выбор пользователя**: клик для выбора и просмотра деталей
 - ✅ **Создание пользователя**: модальное окно с формой
+- ✅ **Удаление пользователя**: кнопка удаления
+- ✅ **Редактирование пользователя**: форма редактирования
+- ✅ **Поиск пользователей**: поиск по имени в реальном времени
+- ✅ **Фильтрация пользователей**: по имени, возрасту, семейному положению
 - ✅ **Адаптивный дизайн**: работает на всех устройствах
 - ✅ **FSD архитектура**: четкое разделение слоев
 - ✅ **Redux Toolkit**: управление состоянием
@@ -124,10 +138,14 @@ npm run format
 type Query {
   getUsers: [User!]!
   getUserById(id: ID!): User
+  searchUsers(searchTerm: String!): [User!]!
+  filterUsers(input: FilterUsersInput!): [User!]!
 }
 
 type Mutation {
   createUser(name: String!, age: Int!, isMarried: Boolean!): User!
+  deleteUserById(id: ID!): [User!]!
+  editUserById(input: UpdateUserInput!): [User!]!
 }
 
 type User {
@@ -135,6 +153,20 @@ type User {
   name: String!
   age: Int!
   isMarried: Boolean!
+}
+
+input UpdateUserInput {
+  id: ID!
+  newName: String
+  newAge: Int
+  isMarriedStatusChanged: Boolean
+}
+
+input FilterUsersInput {
+  nameSearch: String
+  ageFrom: Int
+  ageTo: Int
+  isMarried: Boolean
 }
 ```
 
