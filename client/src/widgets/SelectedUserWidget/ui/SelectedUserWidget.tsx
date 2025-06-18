@@ -29,12 +29,15 @@ export const SelectedUserWidget = ({
   }
 
   const handleEdit = (userId: string) => {
+    console.log('userId',userId);
+    
     if (onEditUser) {
       onEditUser(selectedUser);
     }
   };
 
   const handleDelete = (userId: string) => {
+    console.log('userId',userId);
     if (onDeleteUser) {
       onDeleteUser(selectedUser);
     }

@@ -44,7 +44,7 @@ export const userApi = createApi({
                 },
             }),
             transformResponse: (response: any) => response.data.getUserById,
-            providesTags: (result, error, id) => [{ type: 'User', id }],
+            providesTags: (id) => [{ type: 'User', id }],
         }),
         createUser: builder.mutation<any, { name: string; age: number; isMarried: boolean }>({
             query: (user) => ({
