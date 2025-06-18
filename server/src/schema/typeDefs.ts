@@ -4,6 +4,8 @@ export const typeDefs = gql`
   type Query {
     getUsers: [User!]!
     getUserById(id: ID!): User
+    searchUsers(searchTerm: String!): [User!]!
+    filterUsers(input: FilterUsersInput!): [User!]!
   }
   
   type Mutation {
@@ -24,5 +26,12 @@ export const typeDefs = gql`
     newName: String
     newAge: Int
     isMarriedStatusChanged: Boolean
+  }
+  
+  input FilterUsersInput {
+    nameSearch: String
+    ageFrom: Int
+    ageTo: Int
+    isMarried: Boolean
   }
 `;

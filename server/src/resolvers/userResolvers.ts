@@ -1,4 +1,4 @@
-import {User, CreateUserInput, UpdateUserInput,} from '../types/user.js';
+import {User, CreateUserInput, UpdateUserInput, FilterUsersInput} from '../types/user.js';
 
 // In-memory database
 export const users: User[] = [
@@ -14,6 +14,39 @@ export const userResolvers = {
         },
         getUserById: (_: unknown, {id}: { id: string }): User | undefined => {
             return users.find(user => user.id === id);
+        },
+        searchUsers: (_: unknown, {searchTerm}: { searchTerm: string }): User[] => {
+            const term = searchTerm.toLowerCase().trim();
+            if (!term) return users;
+            
+            return users.filter(user => 
+                user.name.toLowerCase().includes(term)
+            );
+        },
+        filterUsers: (_: unknown, {input}: { input: FilterUsersInput }): User[] => {
+            const { nameSearch, ageFrom, ageTo, isMarried } = input;
+            
+            return users.filter(user => {
+                // Фильтр по имени (не строгое совпадение)
+                if (nameSearch && !user.name.toLowerCase().includes(nameSearch.toLowerCase())) {
+                    return false;
+                }
+                
+                // Фильтр по возрасту (от и до)
+                if (ageFrom !== undefined && user.age < ageFrom) {
+                    return false;
+                }
+                if (ageTo !== undefined && user.age > ageTo) {
+                    return false;
+                }
+                
+                // Фильтр по семейному положению
+                if (isMarried !== undefined && user.isMarried !== isMarried) {
+                    return false;
+                }
+                
+                return true;
+            });
         }
     },
     Mutation: {
