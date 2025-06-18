@@ -1,4 +1,4 @@
-import {User, CreateUserInput} from '../types/user.js';
+import {User, CreateUserInput, UpdateUserInput,} from '../types/user.js';
 
 // In-memory database
 export const users: User[] = [
@@ -33,6 +33,24 @@ export const userResolvers = {
                 users.splice(userIndex, 1);
             }
             return users;
-        }
+        },
+        editUserById: (_: unknown, { input}: {input:UpdateUserInput}): User[] => {
+            const { id, newName, newAge, isMarriedStatusChanged } = input;
+            const userIndex = users.findIndex((user) => user.id === id);
+
+            if (userIndex === -1) {
+                throw new Error(`Пользователь с ID ${id} не найден`);
+            }
+
+            // Обновляем пользователя
+            users[userIndex] = {
+                ...users[userIndex],
+                name: newName !== undefined ? newName : users[userIndex].name,
+                age: newAge !== undefined ? newAge : users[userIndex].age,
+                isMarried: isMarriedStatusChanged !== undefined ? isMarriedStatusChanged : users[userIndex].isMarried,
+            };
+
+            return users;
+        },
     }
 };

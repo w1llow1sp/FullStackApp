@@ -9,6 +9,7 @@ export const typeDefs = gql`
   type Mutation {
     createUser(name: String!, age: Int!, isMarried: Boolean!): User!
     deleteUserById(id: ID!): [User!]!
+    editUserById(input: UpdateUserInput!): [User!]!
   }
   
   type User {
@@ -16,5 +17,12 @@ export const typeDefs = gql`
     name: String!
     age: Int!
     isMarried: Boolean!
+  }
+  
+  input UpdateUserInput {
+    id: ID!
+    newName: String
+    newAge: Int
+    isMarriedStatusChanged: Boolean
   }
 `;
