@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useCreateUserMutation } from '../../../../entities/user/api/userApi';
+import { useCreateUserMutation } from '../../../../entities/user/model/userApi';
 import type { CreateUserInput } from '../../../../entities/user/model/types';
 
 export const CreateUserForm = () => {

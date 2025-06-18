@@ -1,19 +1,97 @@
-import { useGetUsersQuery } from '../../../entities/user/api/userApi';
-import { UserCard } from '../../../entities/user/ui/UserCard/UserCard';
+import { useState } from 'react';
+import { useUpdateUserMutation, useDeleteUserMutation } from '../../../entities/user/model/userApi';
 import { Loader } from '../../../shared/ui/Loader/Loader';
 import { Error } from '../../../shared/ui/Error/Error';
-import type { User } from '../../../entities/user/model/types';
+import { ConfirmDialog } from '../../../shared/ui/ConfirmDialog';
+import { Notification } from '../../../shared/ui/Notification';
+import { EditUserModal } from '../../../features/editUser';
+import { UsersGrid } from '../../UsersGrid';
+import type { User, UpdateUserInput } from '../../../entities/user/model/types';
 
 interface UsersListProps {
+  users: User[];
+  isLoading: boolean;
+  error: any;
   selectedUser: User | null;
   onUserSelect: (user: User | null) => void;
+  onEditUser?: (user: User) => void;
+  onDeleteUser?: (user: User) => void;
 }
 
-export const UsersList = ({ selectedUser, onUserSelect }: UsersListProps) => {
-  const { data: users, isLoading, error } = useGetUsersQuery();
+export const UsersList = ({ users, isLoading, error, selectedUser, onUserSelect, onEditUser, onDeleteUser }: UsersListProps) => {
+  const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deletingUser, setDeletingUser] = useState<User | null>(null);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
 
-  const handleUserSelect = (user: User) => {
-    onUserSelect(selectedUser?.id === user.id ? null : user);
+  // Уведомления
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: 'success' | 'error' | 'info';
+    isVisible: boolean;
+  }>({
+    message: '',
+    type: 'info',
+    isVisible: false,
+  });
+
+  const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setNotification({ message, type, isVisible: true });
+  };
+
+  const hideNotification = () => {
+    setNotification(prev => ({ ...prev, isVisible: false }));
+  };
+
+  const handleEditUser = (user: User) => {
+    setEditingUser(user);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveUser = async (userData: UpdateUserInput) => {
+    try {
+      await updateUser(userData).unwrap();
+      setIsEditModalOpen(false);
+      setEditingUser(null);
+      showNotification('Пользователь успешно обновлен', 'success');
+    } catch (error) {
+      console.error('Ошибка при обновлении пользователя:', error);
+      showNotification('Ошибка при обновлении пользователя', 'error');
+    }
+  };
+
+  const handleDeleteUser = (user: User) => {
+    setDeletingUser(user);
+    setIsConfirmDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingUser) return;
+    try {
+      await deleteUser({ id: deletingUser.id }).unwrap();
+      if (selectedUser?.id === deletingUser.id) {
+        onUserSelect(null);
+      }
+      showNotification('Пользователь успешно удален', 'success');
+    } catch (error) {
+      console.error('Ошибка при удалении пользователя:', error);
+      showNotification('Ошибка при удалении пользователя', 'error');
+    } finally {
+      setIsConfirmDialogOpen(false);
+      setDeletingUser(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsConfirmDialogOpen(false);
+    setDeletingUser(null);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingUser(null);
   };
 
   if (isLoading) {
@@ -26,22 +104,47 @@ export const UsersList = ({ selectedUser, onUserSelect }: UsersListProps) => {
 
   if (!users || users.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-lg text-gray-600">Пользователи не найдены</p>
+      <div className="text-center py-6">
+        <p className="text-gray-600">Пользователи не найдены</p>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {users.map((user) => (
-        <UserCard 
-          key={user.id} 
-          user={user} 
-          isSelected={selectedUser?.id === user.id}
-          onSelect={handleUserSelect}
-        />
-      ))}
+    <div className="space-y-4">
+      <UsersGrid
+        users={users}
+        selectedUser={selectedUser}
+        onUserSelect={onUserSelect}
+        onEdit={onEditUser || handleEditUser}
+        onDelete={onDeleteUser || handleDeleteUser}
+        isDeleting={isDeleting}
+      />
+
+      <EditUserModal
+        user={editingUser}
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        onSave={handleSaveUser}
+        isLoading={isUpdating}
+      />
+
+      <ConfirmDialog
+        isOpen={isConfirmDialogOpen}
+        title="Подтверждение удаления"
+        message={`Вы уверены, что хотите удалить пользователя "${deletingUser?.name}"? Это действие нельзя отменить.`}
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+        confirmText="Удалить"
+        isLoading={isDeleting}
+      />
+
+      <Notification
+        message={notification.message}
+        type={notification.type}
+        isVisible={notification.isVisible}
+        onClose={hideNotification}
+      />
     </div>
   );
 }; 
